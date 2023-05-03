@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:14
+    env_file: .env
+    expose:
+      - '5432'
+    volumes:
+      - banana-can:/var/lib/postgresql/data
+      - ./src/init_data:/docker-entrypoint-initdb.d
+  web:
+    image: node:lts
+    user: 'node'
+    working_dir: /home/src/app
+    env_file: .env
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./:/home/src/app
+    command: 'npm run dev'
+
+volumes:
+  banana-can:
